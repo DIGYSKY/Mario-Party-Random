@@ -4,14 +4,15 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
+    "start": "watchman watch-del '/Users/lilyanchauveau/Project/ReactNative/MarioParty/MarioParty' ; watchman watch-project '/Users/lilyanchauveau/Project/ReactNative/MarioParty/MarioParty' ; expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
-    "expo": "~52.0.28",
+    "expo": "~52.0.29",
+    "expo-av": "~15.0.2",
     "expo-haptics": "~14.0.1",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",

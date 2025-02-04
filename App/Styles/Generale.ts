@@ -12,6 +12,31 @@ interface TextStyles {
   center: TextStyle;
 }
 
+const button = StyleSheet.create({
+  primary: {
+    backgroundColor: '#ecbf2f',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 4,
+    borderColor: '#ece9df',
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0px 2px 3.84px rgba(4, 0, 2, 0.25)' }
+      : {
+        shadowColor: '#040002',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+      }
+    ),
+  },
+  primaryText: {
+    color: '#040002',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});
+
 const container = StyleSheet.create({
   flex: {
     flex: 1,
@@ -49,6 +74,7 @@ const text: TextStyles = {
   h2: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'white',
   },
   h3: {
     fontSize: 16,
@@ -73,4 +99,5 @@ const text: TextStyles = {
 export const Generale = {
   container,
   text,
+  button,
 };
