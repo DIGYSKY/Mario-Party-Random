@@ -38,7 +38,6 @@ export function DisplayMap() {
     };
   }, []);
 
-  // Effet pour synchroniser la vibration avec le changement de carte
   useEffect(() => {
     if (randomMap && isSpinning && (Platform.OS === 'ios' || Platform.OS === 'android')) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -53,7 +52,7 @@ export function DisplayMap() {
       Animated.timing(contentOpacity, {
         toValue: 1,
         duration: 500,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }).start();
     }
   }, [isSpinning]);
@@ -64,9 +63,6 @@ export function DisplayMap() {
       style={[
         S.container.flex
       ]}
-      imageStyle={{
-        // opacity: 0.7
-      }}
     >
       <Animated.View
         style={[
@@ -82,10 +78,10 @@ export function DisplayMap() {
         </Animated.Text>
         <Animated.Image
           source={randomMap?.boardIcon}
+          resizeMode="contain"
           style={{
             width: 200,
             height: 200,
-            resizeMode: 'contain',
             opacity: isSpinning ? 1 : contentOpacity
           }}
         />

@@ -1,4 +1,4 @@
-import { StyleSheet, TextStyle } from "react-native";
+import { StyleSheet, TextStyle, Platform } from "react-native";
 
 interface TextStyles {
   textHeight: TextStyle;
@@ -37,9 +37,14 @@ const text: TextStyles = {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    textShadowColor: 'black',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 8,
+    ...(Platform.OS === 'web'
+      ? { textShadow: '1px 1px 8px black' }
+      : {
+        textShadowColor: 'black',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 8,
+      }
+    ),
   },
   h2: {
     fontSize: 20,
