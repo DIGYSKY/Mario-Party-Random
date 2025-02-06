@@ -34,7 +34,7 @@ yarn start
 
 - Node.js
 - Expo CLI
-- iOS Simulator ou Android Emulator (pour le développement mobile)
+- iOS Simulator ou Android Emulator (pour le développement mobile) ou bien un smartphone connecté au même réseau que le serveur
 
 ## 🎮 Utilisation
 
@@ -42,7 +42,8 @@ yarn start
 2. L'animation de sélection démarre automatiquement
 3. Une carte est sélectionnée aléatoirement après plusieurs rotations
 4. Les détails de la carte s'affichent avec une belle animation de fondu
-5. Utilisez le bouton "Retour" pour recommencer
+5. Utilisez le bouton "Recommencer" pour recommencer
+6. Utilisez le bouton "Retour" pour revenir à l'accueil
 
 ## 🤝 Contribution
 
