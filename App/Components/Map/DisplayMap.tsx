@@ -1,6 +1,5 @@
 import { ImageBackground, Animated, Platform, Image, View } from 'react-native';
 import { useState, useEffect } from 'react';
-import { RandomMap } from './RandomMap';
 import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
 
@@ -13,9 +12,19 @@ import { Generale as S } from '../../Styles/Generale';
 export function DisplayMap({ handleChooseMap }: { handleChooseMap: () => void }) {
   const [randomMap, setRandomMap] = useState<Map | null>(null);
   const [isSpinning, setIsSpinning] = useState(true);
-  const contentOpacity = useState(new Animated.Value(0))[0];
-  const spinValue = useState(new Animated.Value(1))[0];
+  const [contentOpacity, setContentOpacity] = useState(new Animated.Value(0));
+  const [spinValue, setSpinValue] = useState(new Animated.Value(1));
   const [soundLoad, setSoundLoad] = useState<Audio.Sound | null>(null);
+  const [reload, setReload] = useState<boolean>(false);
+
+  const handleReload = () => {
+    setReload(!reload);
+    setIsSpinning(true);
+    setContentOpacity(new Animated.Value(0));
+    setSpinValue(new Animated.Value(1));
+    setRandomMap(null);
+    setSoundLoad(null);
+  }
 
   async function initSoundLoad() {
     try {
@@ -25,7 +34,7 @@ export function DisplayMap({ handleChooseMap }: { handleChooseMap: () => void })
       });
       const { sound: audioSound } = await Audio.Sound.createAsync(
         require('../../../assets/musique/roullette_cub.mp3'),
-        { isLooping: true }
+        { isLooping: false }
       );
       setSoundLoad(audioSound);
       if (Platform.OS !== 'web') {
@@ -42,19 +51,27 @@ export function DisplayMap({ handleChooseMap }: { handleChooseMap: () => void })
     return () => {
       soundLoad?.unloadAsync();
     };
-  }, []);
+  }, [reload]);
 
   useEffect(() => {
-    const totalMaps = 17;
+    const totalMaps = 20;
     let mapsShown = 0;
-    let currentDelay = 100;
-    let timeoutId: NodeJS.Timeout;
+    let currentDelay = 170;
+    let intervalId: ReturnType<typeof setInterval>;
     let isAnimating = true;
+    let map = 0;
 
     const showNextMap = () => {
-      if (!isAnimating) return;
-
-      const map = RandomMap();
+      if (!isAnimating || mapsShown >= totalMaps) {
+        clearInterval(intervalId);
+        setIsSpinning(false);
+        return;
+      }
+      let nextMap = Math.floor(Math.random() * Maps.length);
+      while (nextMap === map) {
+        nextMap = Math.floor(Math.random() * Maps.length);
+      }
+      map = nextMap;
       requestAnimationFrame(() => {
         setRandomMap(Maps[map]);
 
@@ -64,22 +81,15 @@ export function DisplayMap({ handleChooseMap }: { handleChooseMap: () => void })
       });
 
       mapsShown++;
-
-      if (mapsShown < totalMaps) {
-        currentDelay = currentDelay * 1.1;
-        timeoutId = setTimeout(showNextMap, currentDelay);
-      } else {
-        setIsSpinning(false);
-      }
     };
 
-    timeoutId = setTimeout(showNextMap, currentDelay);
+    intervalId = setInterval(showNextMap, currentDelay);
 
     return () => {
       isAnimating = false;
-      clearTimeout(timeoutId);
+      clearInterval(intervalId);
     };
-  }, []);
+  }, [reload]);
 
   useEffect(() => {
     if (!isSpinning) {
@@ -96,9 +106,11 @@ export function DisplayMap({ handleChooseMap }: { handleChooseMap: () => void })
         })
       ]).start();
 
-      soundLoad?.unloadAsync();
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      }
     }
-  }, [isSpinning]);
+  }, [isSpinning, reload]);
 
   return (
     <ImageBackground
@@ -130,12 +142,20 @@ export function DisplayMap({ handleChooseMap }: { handleChooseMap: () => void })
         <Animated.Text style={[S.text.textHeight, S.text.center, { opacity: contentOpacity }]}>
           {randomMap?.description}
         </Animated.Text>
-        <PrimaryButton text="Retour" onPress={handleChooseMap} style={
-          {
-            opacity: contentOpacity,
-            marginVertical: 20
-          }
-        } />
+        <Animated.View style={{ opacity: contentOpacity }}>
+          <PrimaryButton text="Recommencer" onPress={handleReload} style={
+            {
+              marginVertical: 20
+            }
+          } />
+        </Animated.View>
+        <Animated.View style={{ opacity: contentOpacity }}>
+          <PrimaryButton text="Retour" onPress={handleChooseMap} style={
+            {
+              marginVertical: 10
+            }
+          } />
+        </Animated.View>
       </View>
     </ImageBackground>
   );

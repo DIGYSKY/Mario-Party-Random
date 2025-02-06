@@ -18,7 +18,10 @@ export function App() {
       });
       const { sound: audioSound } = await Audio.Sound.createAsync(
         require('../assets/musique/main.mp3'),
-        { isLooping: true }
+        {
+          isLooping: true,
+          volume: 0.5
+        }
       );
       setSound(audioSound);
       if (Platform.OS !== 'web') {
